@@ -32,7 +32,7 @@
         <source-file src="src/ios/StarBitmap.m" />
 	<source-file src="src/ios/StarIO.framework" framework="true"/>	
 	
-	<framework src="StarIO.framework" custom="true" />
+	<framework src="src/ios/StarIO.framework" custom="true" />
 	<framework src="ExternalAccessory.framework" />
         <framework src="CoreBluetooth.framework" />
 </platform>
