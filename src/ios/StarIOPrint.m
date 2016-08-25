@@ -40,16 +40,13 @@
     
     //Then print Image
     
-    [self print:imageToPrint];
-    
-    //Success
-    
-    BOOL success = true;
-    
-    NSString *successString = success ? @"YES" : @"NO";
-    
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:successString] callbackId:command.callbackId];
-    
+    [self print:imageToPrint completion:^(NSError *error) {
+        if (error == nil) {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Printed Successfully!"] callbackId:command.callbackId];
+        } else {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription] callbackId:command.callbackId];
+        }
+    }];
 }
 
 - (UIImage *)generateImageFromText:(NSString *)text {
@@ -70,7 +67,7 @@
     return viewImage;
 }
 
-- (void)print:(UIImage *)imgData {
+- (void)print:(UIImage *)imgData completion:(void(^)(NSError *error))completion {
     NSUserDefaults *pref=[NSUserDefaults standardUserDefaults];
     NSString *tempIPStr= @"10.3.1.172";
     
@@ -98,11 +95,13 @@
         shortcommand = [rasterDoc EndDocumentCommandData];
         [commandsToPrint appendData:shortcommand];
         
-        [self sendCommand:commandsToPrint portName:fullIP portSettings:portString timeoutMillis:10000];
+        [self sendCommand:commandsToPrint portName:fullIP portSettings:portString timeoutMillis:10000 completion:^(NSError *error) {
+            completion(error);
+        }];
     }
 }
 
-- (void)sendCommand:(NSData *)commandsToPrint portName:(NSString *)portName portSettings:(NSString *)portSettings timeoutMillis:(u_int32_t)timeoutMillis
+- (void)sendCommand:(NSData *)commandsToPrint portName:(NSString *)portName portSettings:(NSString *)portSettings timeoutMillis:(u_int32_t)timeoutMillis completion:(void(^)(NSError *error))completion
 {
     int commandSize = (int)commandsToPrint.length;
     unsigned char *dataToSentToPrinter = (unsigned char *)malloc(commandSize);
@@ -116,14 +115,16 @@
         //BOOL online = [starPort getOnlineStatus];
         if (starPort == nil)
         {
-            [self showAlert:@"Fail to Open Port.\nRefer to \"getPort API\" in the manual."];
+            NSError *error = [self generateError:@"Fail to Open Port.\nRefer to \"getPort API\" in the manual."];
+            completion(error);
             return;
         }
         
         StarPrinterStatus_2 status;
         [starPort beginCheckedBlock:&status :2];
         if (status.offline == SM_TRUE) {
-            [self showAlert:@"Printer is offline"];
+            NSError *error = [self generateError:@"Printer is offline"];
+            completion(error);
             return;
         }
         
@@ -148,34 +149,40 @@
         
         if (totalAmountWritten < commandSize)
         {
-            [self showAlert:@"Write port timed out"];
+            NSError *error = [self generateError:@"Write port timed out"];
+            completion(error);
             return;
         }
         
         starPort.endCheckedBlockTimeoutMillis = 30000;
         [starPort endCheckedBlock:&status :2];
         if (status.offline == SM_TRUE) {
-            [self showAlert:@"Printer is offline"];
+            NSError *error = [self generateError:@"Printer is offline"];
+            completion(error);
             return;
         }
     }
     @catch (PortException *exception)
     {
-        [self showAlert:@"Write port timed out"];
+        NSError *error = [self generateError:@"Write port timed out"];
     }
     @finally
     {
         free(dataToSentToPrinter);
         [SMPort releasePort:starPort];
+        
+        completion(nil);
     }
 }
 
-- (void)showAlert:(NSString *)alertText {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:alertText preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alert addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleCancel handler:nil]];
-    
-    //[self presentViewController:alert animated:YES completion:nil];
+- (NSError *)generateError:(NSString *)messageText {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(messageText, nil)
+                               };
+    NSError *error = [NSError errorWithDomain:@"com.StarIOPrint"
+                                         code:-57
+                                     userInfo:userInfo];
+    return error;
 }
 
 @end
