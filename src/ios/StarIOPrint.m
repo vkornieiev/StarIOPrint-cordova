@@ -165,6 +165,7 @@
     @catch (PortException *exception)
     {
         NSError *error = [self generateError:@"Write port timed out"];
+        completion(error);
     }
     @finally
     {

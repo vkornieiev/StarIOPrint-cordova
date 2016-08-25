@@ -11,8 +11,8 @@ This plugin follows the Cordova 3.0+ plugin spec, so it can be installed through
 
 	var StarIOPrint = cordova.require("com-Star-plugins-StarPrint.StarIOPrint");
 
-	var success  = function() { alert('Success block called!'); } 
-	var fail = function() { alert('Fail block called!'); }
+	var success  = function(message) { alert(message); }
+        var fail = function(message) { alert(message); }
         
 	StarIOPrint.cordovaPOSPrint('Text To Print', success, fail);
 
