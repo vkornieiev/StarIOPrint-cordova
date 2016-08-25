@@ -13,7 +13,7 @@
     <author>Vladyslav Korneyev</author>
 <engines>
         <engine name="cordova" version=">=3.0.0" />
-	<engine name="StarIO.framework" version=">=2.0.0" platform="ios" scriptSrc="src/ios/StarIO.framework"/>
+	<engine name="StarIO.framework" version=">=2.0.0" platform="ios" scriptSrc="StarIO.framework"/>
     </engines>
     <js-module name="StarIOPrint" src="www/StarIOPrint.js">
         <clobbers target="starioprint" />
