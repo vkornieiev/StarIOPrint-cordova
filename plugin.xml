@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com-Star-plugins-StarPrint" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>StarIOPrint</name>
+<description>
+        Cordova plugin to print using StarIO Printers.
+    </description>
+<keywords>
+		Star Printer, StarIO, iOS
+    </keywords>
+
+    <license>Apache 2.0</license>
+
+    <author>Vladyslav Korneyev</author>
+<engines>
+        <engine name="cordova" version=">=3.0.0" />
+	<engine name="StarIO.framework" version=“>=2.0.0” platform="ios" scriptSrc="src/ios/StarIO.framework"/>
+    </engines>
+    <js-module name="StarIOPrint" src="www/StarIOPrint.js">
+        <clobbers target=“starioprint” />
+    </js-module>
+<platform name="ios">
+  <config-file target="config.xml" parent="/*">
+    <feature name="StarIOPrint">
+      <param name="ios-package" value="StarIOPrint" />
+    </feature>
+  </config-file>
+  	<header-file src="src/ios/StarIOPrint.h" />
+  	<source-file src="src/ios/StarIOPrint.m" />
+	<header-file src="src/ios/RasterDocument.h" />
+        <source-file src="src/ios/RasterDocument.m" />		
+        <header-file src="src/ios/StarBitmap.h" />
+        <source-file src="src/ios/StarBitmap.m" />	
+	
+        <framework src="src/ios/StarIO.framework"/>
+	<framework src="ExternalAccessory.framework" />
+        <framework src="CoreBluetooth.framework" />
+</platform>
+</plugin>
