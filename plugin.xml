@@ -30,9 +30,9 @@
         <source-file src="src/ios/RasterDocument.m" />		
         <header-file src="src/ios/StarBitmap.h" />
         <source-file src="src/ios/StarBitmap.m" />
-	<source-file src="src/ios/StarIO.framework" framework="true"/>	
+	<!-- <source-file src="src/ios/StarIO.framework" framework="true"/> -->	
 	
-	<framework src="src/ios/StarIO.framework" custom="true" />
+	<framework src="StarIO.framework" custom="true" />
 	<framework src="ExternalAccessory.framework" />
         <framework src="CoreBluetooth.framework" />
 </platform>
