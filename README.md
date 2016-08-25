@@ -7,7 +7,8 @@ This plugin follows the Cordova 3.0+ plugin spec, so it can be installed through
 
 # JavaScript Usage Example
 
-•	var StarIOPrint = cordova.require("com-Star-plugins-StarPrint.StarIOPrint");
+•	
+	var StarIOPrint = cordova.require("com-Star-plugins-StarPrint.StarIOPrint");
 
 	var success  = function() { alert('Success block called!'); } 
 	var fail = function() { alert('Fail block called!'); }
