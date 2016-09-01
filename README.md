@@ -7,16 +7,31 @@ This plugin follows the Cordova 3.0+ plugin spec, so it can be installed through
 
 # JavaScript Usage Example
 
-•	Send custom text on printer
-
-	var StarIOPrint = cordova.require("com-Star-plugins-StarPrint.StarIOPrint");
-
-	var success  = function(message) { alert(message); }
-        var fail = function(message) { alert(message); }
+•	Example of use:
         
-	StarIOPrint.cordovaPOSPrint('Text To Print', success, fail);
+onDeviceReady: function() {
+app.receivedEvent('deviceready');
+
+// Connect to available printer.
+cordova.plugins.starIOPrint.connectToPrinter(
+    function(success) { 
+        alert(success); 
+    }
+    , function(error) { 
+        alert(error); 
+    }
+);
 
 
-# Important
+// Print text.
+cordova.plugins.starIOPrint.print('Text To Print', 
+    function(success) { 
+        alert(success); 
+    }
+    , function(error) { 
+        alert(error); 
+    }
+);
 
-If you change this plugin, next time you update any plugin your changes will be overwritten. You need to figure out how to disable auto updates.
+}
+

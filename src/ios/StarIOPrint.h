@@ -10,7 +10,7 @@
 
 @interface StarIOPrint : CDVPlugin
 
+- (void)connectToPrinter:(CDVInvokedUrlCommand *)command;
 - (void)cordovaPOSPrint:(CDVInvokedUrlCommand *)command;
-- (UIImage *)generateImageFromText:(NSString *)text;
 
 @end

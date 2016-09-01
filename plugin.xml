@@ -1,39 +1,58 @@
-<?xml version='1.0' encoding='utf-8'?>
-<plugin id="com-Star-plugins-StarPrint" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>StarIOPrint</name>
-<description>
-        Cordova plugin to print using StarIO Printers.
-    </description>
-<keywords>
-		Star Printer, StarIO, iOS
-    </keywords>
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <license>Apache 2.0</license>
-
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.vkorneyev.cordova.plugin.starioprint"
+    version="0.0.1">
+    
+    <name>Cordova-Plugin-StarIOPrint</name>
+    
+    <description>Cordova plugin to print using StarIO Printers.</description>
+    
+    <repo>https://github.com/fasteroko/cordova-plugin-StarIOPrint.git</repo>
+    
+    <keyword>StarPrinter, StarIO, iOS</keyword>
+    
+    <license>Apache 2.0 License</license>
+    
     <author>Vladyslav Korneyev</author>
-<engines>
-        <engine name="cordova" version=">=3.0.0" />
-	<engine name="StarIO.framework" version=">=2.0.0" platform="ios" scriptSrc="StarIO.framework"/>
+    
+    <!-- cordova -->
+    <engines>
+        <engine name="cordova" version=">=3.5.0"/>
     </engines>
-    <js-module name="StarIOPrint" src="www/StarIOPrint.js">
-        <clobbers target="starioprint" />
+    
+    <!-- dependencies -->
+    <dependency id="cordova-plugin-device" />
+    
+    <!-- js -->
+    <js-module src="www/StarIOPrint.js" name="StarIOPrint">
+        <clobbers target="cordova.plugins.starIOPrint" />
     </js-module>
-<platform name="ios">
-  <config-file target="config.xml" parent="/*">
-    <feature name="StarIOPrint">
-      <param name="ios-package" value="StarIOPrint" />
-    </feature>
-  </config-file>
-  	<header-file src="src/ios/StarIOPrint.h" />
-  	<source-file src="src/ios/StarIOPrint.m" />
-	<header-file src="src/ios/RasterDocument.h" />
-        <source-file src="src/ios/RasterDocument.m" />		
+    
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="StarIOPrint">
+                <param name="ios-package" value="StarIOPrint" />
+            </feature>
+        </config-file>
+        
+        <header-file src="src/ios/StarIOPrint.h" />
+        <source-file src="src/ios/StarIOPrint.m" />
+        
+        <header-file src="src/ios/RasterDocument.h" />
+        <source-file src="src/ios/RasterDocument.m" />
+        
         <header-file src="src/ios/StarBitmap.h" />
         <source-file src="src/ios/StarBitmap.m" />
-	<!-- <source-file src="src/ios/StarIO.framework" framework="true"/> -->	
-	
-	<framework src="StarIO.framework" custom="true" />
-	<framework src="ExternalAccessory.framework" />
-        <framework src="CoreBluetooth.framework" />
-</platform>
+        
+        <framework src="src/ios/StarIO.framework" custom="true" />
+        <framework src="ExternalAccessory.framework"/>
+        <framework src="CoreBluetooth.framework"/>
+    </platform>
+    
 </plugin>
+
+
+

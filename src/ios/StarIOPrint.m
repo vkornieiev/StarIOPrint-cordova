@@ -14,23 +14,23 @@
 
 #import <sys/time.h>
 
-@implementation StarIOPrint
+@implementation StarIOPrint {
+    PortInfo *_port;
+}
 
-- (void)checkPrinterConnectionStatus:(CDVInvokedUrlCommand *)command {
-    
+- (void)connectToPrinter:(CDVInvokedUrlCommand *)command {
     NSArray *printers = [SMPort searchPrinter];
     
-    PortInfo *port = [printers firstObject];
+    _port = [printers firstObject];
     
     NSLog(@"%@",port.portName);
     
-    SMPort *starPort = [SMPort getPort:port.portName :@"9100" :10000];
-    
-    BOOL success = [starPort getOnlineStatus];
-    
-    NSString *successString = success ? @"YES" : @"NO";
-    
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:successString] callbackId:command.callbackId];
+    if (_port) {
+        NSString *printerIP = [NSString stringWithFormat:@"Printer is found! IP: %@", port.portName];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:printerIP] callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Printer is not found!"] callbackId:command.callbackId];
+    }
     
 }
 
