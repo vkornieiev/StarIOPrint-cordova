@@ -23,10 +23,10 @@
     
     _port = [printers firstObject];
     
-    NSLog(@"%@",port.portName);
+    NSLog(@"%@",_port.portName);
     
     if (_port) {
-        NSString *printerIP = [NSString stringWithFormat:@"Printer is found! IP: %@", port.portName];
+        NSString *printerIP = [NSString stringWithFormat:@"Printer is found! IP: %@", _port.portName];
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:printerIP] callbackId:command.callbackId];
     } else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Printer is not found!"] callbackId:command.callbackId];
@@ -78,9 +78,6 @@
         }
         NSString *portString = [NSString stringWithFormat:@"%ld", (long)[portObj integerValue]];
         
-        NSString *fullIP = @"TCP:";
-        fullIP = [fullIP stringByAppendingString:tempIPStr];
-        
         RasterDocument *rasterDoc = [[RasterDocument alloc] initWithDefaults:RasSpeed_Medium endOfPageBehaviour:RasPageEndMode_FeedAndFullCut endOfDocumentBahaviour:RasPageEndMode_FeedAndFullCut topMargin:RasTopMargin_Standard pageLength:0 leftMargin:0 rightMargin:0];
         
         StarBitmap *starbitmap = [[StarBitmap alloc] initWithUIImage:imgData :576 :false];
@@ -95,7 +92,7 @@
         shortcommand = [rasterDoc EndDocumentCommandData];
         [commandsToPrint appendData:shortcommand];
         
-        [self sendCommand:commandsToPrint portName:fullIP portSettings:portString timeoutMillis:10000 completion:^(NSError *error) {
+        [self sendCommand:commandsToPrint portName:_port.portName portSettings:portString timeoutMillis:10000 completion:^(NSError *error) {
             completion(error);
         }];
     }
