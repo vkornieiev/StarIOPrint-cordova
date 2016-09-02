@@ -52,6 +52,20 @@
         <framework src="CoreBluetooth.framework"/>
     </platform>
     
+    
+    <!-- Android -->
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="StarIOPrint">
+                <param name="android-package" value="pro.i_it.itcraft.cardova.StarIOPrint" />
+            </feature>
+        </config-file>
+        
+        <source-file src="src/pro/i_it/itcraft/cardova/StarIOPrint.java" />
+        <header-file src="src/pro/i_it/itcraft/cardova/interfaces/IStarIOPrint.java" />
+        
+    </platform>
+    
 </plugin>
 
 
