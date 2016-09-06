@@ -52,6 +52,7 @@
 - (UIImage *)generateImageFromText:(NSString *)text {
     
     UILabel *testLabel = [[UILabel alloc] init];
+    testLabel.numberOfLines = 0;
     testLabel.text = text;
     testLabel.font = [UIFont systemFontOfSize:50];
     testLabel.textColor = [UIColor blackColor
