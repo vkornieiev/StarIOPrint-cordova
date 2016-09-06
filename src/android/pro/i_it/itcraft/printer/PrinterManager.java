@@ -71,6 +71,8 @@ public class PrinterManager implements IPrinterManager {
 
     @Override
     public void saveDefaultPrinter(PortInfo portInfo, Boolean drawerOpenActiveHigh) {
+        if(portInfo == null)
+            return;
         int model = ModelCapability.getModel(portInfo.getModelName());
         String mPortSettings = ModelCapability.getPortSettings(model);
         StarIoExt.Emulation emulation = ModelCapability.getEmulation(model);

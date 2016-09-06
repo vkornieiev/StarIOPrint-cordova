@@ -36,7 +36,7 @@ public class StarIOPrint extends CordovaPlugin implements IStarIOPrint {
             this.echo(message, callbackContext);
             Log.d(TAG, "execute: echo : " + message);
             return true;
-        } else if (action.equals("searchPrinter")) {
+        } else if (action.equals("connectToPrinter")) {
             searchPrinter(callbackContext);
             return true;
         } else if (action.equals("print")) {

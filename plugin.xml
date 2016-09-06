@@ -79,12 +79,13 @@
         
         <source-file src="src/android/StarIOPort3.1.jar" target-dir="libs" />
         <source-file src="src/android/starioextension.jar" target-dir="libs" />
-        <source-file src="src/android/smcloudservices.aar" target-dir="libs" />
+        <source-file src="src/android/smcloudservices.aar" target-dir="libs" /> 
+        
         
         <framework src="io.reactivex:rxandroid:1.2.1" />
         <framework src="io.reactivex:rxjava:1.1.6" />
         <framework src="com.google.code.gson:gson:2.4" />
-             </platform>
+    </platform>
     
 </plugin>
 
