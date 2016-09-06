@@ -52,6 +52,41 @@
         <framework src="CoreBluetooth.framework"/>
     </platform>
     
+    
+    <!-- Android -->
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="StarIOPrint">
+                <param name="android-package" value="pro.i_it.itcraft.cardova.StarIOPrint" />
+            </feature>
+        </config-file>
+        
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+        </config-file>
+        
+        <source-file src="src/android/pro/i_it/itcraft/cardova/StarIOPrint.java" target-dir="src/pro/i_it/itcraft/cardova/" />
+        <source-file src="src/android/pro/i_it/itcraft/cardova/interfaces/IStarIOPrint.java" target-dir="src/pro/i_it/itcraft/cardova/interfaces/" />
+        
+        
+        <source-file src="src/android/pro/i_it/itcraft/printer/interfaces/IPrinterManager.java" target-dir="src/pro/i_it/itcraft/printer/interfaces/" />
+        <source-file src="src/android/pro/i_it/itcraft/printer/PrinterManager.java" target-dir="src/pro/i_it/itcraft/printer/" />
+        
+        <source-file src="src/android/pro/i_it/itcraft/printer/untils/Communication.java" target-dir="src/pro/i_it/itcraft/printer/untils/" />
+        <source-file src="src/android/pro/i_it/itcraft/printer/untils/ModelCapability.java" target-dir="src/pro/i_it/itcraft/printer/untils/" />
+        <source-file src="src/android/pro/i_it/itcraft/printer/untils/PrinterSetting.java" target-dir="src/pro/i_it/itcraft/printer/untils/" />
+        
+        
+        <source-file src="src/android/StarIOPort3.1.jar" target-dir="libs" />
+        <source-file src="src/android/starioextension.jar" target-dir="libs" />
+        <source-file src="src/android/smcloudservices.aar" target-dir="libs" /> 
+        
+        
+        <framework src="io.reactivex:rxandroid:1.2.1" />
+        <framework src="io.reactivex:rxjava:1.1.6" />
+        <framework src="com.google.code.gson:gson:2.4" />
+    </platform>
+    
 </plugin>
 
 
