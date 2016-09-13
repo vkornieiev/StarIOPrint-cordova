@@ -10,6 +10,7 @@
 
 @interface StarIOPrint : CDVPlugin
 
+- (void)getAvailablePrintersList:(CDVInvokedUrlCommand *)command;
 - (void)connectToPrinter:(CDVInvokedUrlCommand *)command;
 - (void)cordovaPOSPrint:(CDVInvokedUrlCommand *)command;
 

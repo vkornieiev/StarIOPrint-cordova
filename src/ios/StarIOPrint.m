@@ -15,21 +15,43 @@
 #import <sys/time.h>
 
 @implementation StarIOPrint {
-    PortInfo *_port;
+    NSArray *_networkPrintersArray;
+    PortInfo *_activePrinter;
+}
+
+- (void)getAvailablePrintersList:(CDVInvokedUrlCommand *)command {
+    _networkPrintersArray = [SMPort searchPrinter];
+    
+    if (_networkPrintersArray && [_networkPrintersArray count] > 0) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:_networkPrintersArray] callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsArray:_networkPrintersArray] callbackId:command.callbackId];
+    }
 }
 
 - (void)connectToPrinter:(CDVInvokedUrlCommand *)command {
-    NSArray *printers = [SMPort searchPrinter];
     
-    _port = [printers firstObject];
+    NSString *portName = [command.arguments firstObject];
     
-    NSLog(@"%@",_port.portName);
+    if (_networkPrintersArray && [_networkPrintersArray count] > 0) {
+        for (PortInfo *printer in _networkPrintersArray) {
+            if ([printer.portName isEqualToString:portName]) {
+                _activePrinter = printer;
+                break;
+            }
+        }
+    }
     
-    if (_port) {
-        NSString *printerIP = [NSString stringWithFormat:@"Printer is found! IP: %@", _port.portName];
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:printerIP] callbackId:command.callbackId];
+    NSLog(@"%@",_activePrinter.portName);
+    
+    if (_activePrinter) {
+        NSString *printerIP = [NSString stringWithFormat:@"Printer connected successfully! IP: %@", _activePrinter.portName];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:
+                                                CDVCommandStatus_OK messageAsString:printerIP] callbackId:command.callbackId];
     } else {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Printer is not found!"] callbackId:command.callbackId];
+        NSString *printerIP = [NSString stringWithFormat:@"Cannot connect to printer with IP: %@", _activePrinter.portName];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:
+                                                CDVCommandStatus_ERROR messageAsString:printerIP] callbackId:command.callbackId];
     }
     
 }
@@ -93,7 +115,7 @@
         shortcommand = [rasterDoc EndDocumentCommandData];
         [commandsToPrint appendData:shortcommand];
         
-        [self sendCommand:commandsToPrint portName:_port.portName portSettings:portString timeoutMillis:10000 completion:^(NSError *error) {
+        [self sendCommand:commandsToPrint portName:_activePrinter.portName portSettings:portString timeoutMillis:10000 completion:^(NSError *error) {
             completion(error);
         }];
     }
