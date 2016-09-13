@@ -12,8 +12,19 @@ This plugin follows the Cordova 3.5+ plugin spec, so it can be installed through
     onDeviceReady: function() {
     app.receivedEvent('deviceready');
 
-    // Connect to available printer.
-    cordova.plugins.starIOPrint.connectToPrinter(
+    //Search for available printer
+    cordova.plugins.starIOPrint.getAvailablePrintersList(
+        function(success) {
+            alert('Port:');
+            alert(success[0].portName);
+        }
+        , function(error) {
+            alert(error);
+        }
+    );
+
+    // Connect to selected printer.
+    cordova.plugins.starIOPrint.connectToPrinter('TCP:10.3.1.195',
         function(success) { 
             alert(success); 
         }

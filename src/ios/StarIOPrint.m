@@ -19,13 +19,21 @@
     PortInfo *_activePrinter;
 }
 
+#pragma mark - Plugin methods
+
 - (void)getAvailablePrintersList:(CDVInvokedUrlCommand *)command {
     _networkPrintersArray = [SMPort searchPrinter];
     
+    NSArray *availablePrintersDictionaryArray = [self convertPrintersObjectsArrayToDictionaryArray];
+    
     if (_networkPrintersArray && [_networkPrintersArray count] > 0) {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:_networkPrintersArray] callbackId:command.callbackId];
+        [self.commandDelegate runInBackground:^{
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:availablePrintersDictionaryArray] callbackId:command.callbackId];
+        }];
     } else {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsArray:_networkPrintersArray] callbackId:command.callbackId];
+        [self.commandDelegate runInBackground:^{
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsArray:availablePrintersDictionaryArray] callbackId:command.callbackId];
+        }];
     }
 }
 
@@ -45,15 +53,18 @@
     NSLog(@"%@",_activePrinter.portName);
     
     if (_activePrinter) {
-        NSString *printerIP = [NSString stringWithFormat:@"Printer connected successfully! IP: %@", _activePrinter.portName];
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:
-                                                CDVCommandStatus_OK messageAsString:printerIP] callbackId:command.callbackId];
+        [self.commandDelegate runInBackground:^{
+            NSString *printerIP = [NSString stringWithFormat:@"Printer connected successfully! IP: %@", _activePrinter.portName];
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:
+                                                    CDVCommandStatus_OK messageAsString:printerIP] callbackId:command.callbackId];
+        }];
     } else {
-        NSString *printerIP = [NSString stringWithFormat:@"Cannot connect to printer with IP: %@", _activePrinter.portName];
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:
-                                                CDVCommandStatus_ERROR messageAsString:printerIP] callbackId:command.callbackId];
+        [self.commandDelegate runInBackground:^{
+            NSString *printerIP = [NSString stringWithFormat:@"Cannot connect to printer with IP: %@", _activePrinter.portName];
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:
+                                                    CDVCommandStatus_ERROR messageAsString:printerIP] callbackId:command.callbackId];
+        }];
     }
-    
 }
 
 - (void)cordovaPOSPrint:(CDVInvokedUrlCommand *)command {
@@ -64,12 +75,18 @@
     
     [self print:imageToPrint completion:^(NSError *error) {
         if (error == nil) {
-            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Printed Successfully!"] callbackId:command.callbackId];
+            [self.commandDelegate runInBackground:^{
+                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Printed Successfully!"] callbackId:command.callbackId];
+            }];
         } else {
-            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription] callbackId:command.callbackId];
+            [self.commandDelegate runInBackground:^{
+                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription] callbackId:command.callbackId];
+            }];
         }
     }];
 }
+
+#pragma mark - Printer Logic
 
 - (UIImage *)generateImageFromText:(NSString *)text {
     
@@ -135,7 +152,7 @@
         //BOOL online = [starPort getOnlineStatus];
         if (starPort == nil)
         {
-            NSError *error = [self generateError:@"Fail to Open Port.\nRefer to \"getPort API\" in the manual."];
+            NSError *error = [self generateErrorWithMessage:@"Fail to Open Port.\nRefer to \"getPort API\" in the manual." andCode:1001];
             completion(error);
             return;
         }
@@ -143,7 +160,7 @@
         StarPrinterStatus_2 status;
         [starPort beginCheckedBlock:&status :2];
         if (status.offline == SM_TRUE) {
-            NSError *error = [self generateError:@"Printer is offline"];
+            NSError *error = [self generateErrorWithMessage:@"Printer is offline" andCode:1002];
             completion(error);
             return;
         }
@@ -169,7 +186,7 @@
         
         if (totalAmountWritten < commandSize)
         {
-            NSError *error = [self generateError:@"Write port timed out"];
+            NSError *error = [self generateErrorWithMessage:@"Write port timed out" andCode: 1003];
             completion(error);
             return;
         }
@@ -177,14 +194,14 @@
         starPort.endCheckedBlockTimeoutMillis = 30000;
         [starPort endCheckedBlock:&status :2];
         if (status.offline == SM_TRUE) {
-            NSError *error = [self generateError:@"Printer is offline"];
+            NSError *error = [self generateErrorWithMessage:@"Printer is offline" andCode:1004];
             completion(error);
             return;
         }
     }
     @catch (PortException *exception)
     {
-        NSError *error = [self generateError:@"Write port timed out"];
+        NSError *error = [self generateErrorWithMessage:@"Write port timed out" andCode:1005];
         completion(error);
     }
     @finally
@@ -196,12 +213,29 @@
     }
 }
 
-- (NSError *)generateError:(NSString *)messageText {
+#pragma mark - Private
+
+- (NSArray *)convertPrintersObjectsArrayToDictionaryArray {
+    NSMutableArray *dictionaryArray = [[NSMutableArray alloc] init];
+    
+    for (PortInfo *printer in _networkPrintersArray) {
+        NSDictionary *printerDictionary = @{
+                                            @"portName":printer.portName,
+                                            @"macAddress":printer.macAddress,
+                                            @"modelName":printer.modelName
+                                            };
+        [dictionaryArray addObject:printerDictionary];
+    }
+    
+    return [dictionaryArray copy];
+}
+
+- (NSError *)generateErrorWithMessage:(NSString *)messageText andCode:(NSInteger)code {
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: NSLocalizedString(messageText, nil)
                                };
     NSError *error = [NSError errorWithDomain:@"com.StarIOPrint"
-                                         code:-57
+                                         code:code
                                      userInfo:userInfo];
     return error;
 }
