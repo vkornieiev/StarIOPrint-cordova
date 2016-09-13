@@ -17,6 +17,8 @@ This plugin follows the Cordova 3.5+ plugin spec, so it can be installed through
         function(success) {
             alert('Port:');
             alert(success[0].portName);
+            //alert(success[0].macAddress);
+            //alert(success[0].modelName);
         }
         , function(error) {
             alert(error);
