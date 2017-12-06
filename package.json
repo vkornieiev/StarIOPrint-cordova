@@ -1,0 +1,1 @@
+{"id":"com.vkorneyev.cordovaStarIOPlugin","version":"0.0.1","description":"\n        Cordova plugin to print using StarIO Printers.\n    ","license":"Apache 2.0","keywords":["Star Printer","StarIO","iOS","ecosystem:cordova","cordova-ios"],"engines":[{"name":"cordova","version":">=3.0.0"}],"platforms":["ios"]}
