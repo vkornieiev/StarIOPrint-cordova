@@ -1,1 +1,33 @@
-{"id":"com.vkorneyev.cordovaStarIOPlugin","version":"0.0.1","description":"\n        Cordova plugin to print using StarIO Printers.\n    ","license":"Apache 2.0","keywords":["Star Printer","StarIO","iOS","ecosystem:cordova","cordova-ios"],"engines":[{"name":"cordova","version":">=3.0.0"}],"platforms":["ios"]}
+{
+  "name": "StarIOPrint-cordova",
+  "version": "0.0.2",
+  "description": "Cordova plugin to print using StarIO Printers.",
+  "author": "Vladyslav Korneyev",
+  "license": "MIT",
+  "keywords": [
+    "Star Printer",
+    "StarIO",
+    "iOS"
+  ],
+  "main": "www/StarIOPrint.js",
+  "homepage": "https://github.com/fasteroko/StarIOPrint-cordova",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fasteroko/StarIOPrint-cordova"
+  },
+  "bugs": {
+    "url": "https://github.com/fasteroko/StarIOPrint-cordova/issues"
+  },
+  "cordova": {
+    "id": "com.vkorneyev.cordovaStarIOPlugin",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ]
+}
