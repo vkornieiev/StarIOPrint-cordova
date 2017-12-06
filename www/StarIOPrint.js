@@ -10,8 +10,12 @@ StarIOPrint.connectToPrinter = function(printerIP, success, error) {
     exec(success, error, 'StarIOPrint', 'connectToPrinter', [printerIP]);
 };
 
-StarIOPrint.print = function(arg0, success, error) {
-    exec(success, error, 'StarIOPrint', 'cordovaPOSPrint', [arg0]);
+StarIOPrint.printText = function(arg0, success, error) {
+    exec(success, error, 'StarIOPrint', 'cordovaPOSPrintText', [arg0]);
+};
+
+StarIOPrint.printHTMLText = function(arg0, success, error) {
+    exec(success, error, 'StarIOPrint', 'cordovaPOSPrintHTMLText', [arg0]);
 };
 
 module.exports = StarIOPrint;

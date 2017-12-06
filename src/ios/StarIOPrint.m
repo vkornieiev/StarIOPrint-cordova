@@ -8,6 +8,8 @@
 
 #import "StarIOPrint.h"
 
+#import "NSString+HTMLAttributedString.h"
+
 #import "RasterDocument.h"
 #import "StarBitmap.h"
 #import <StarIO/SMPort.h>
@@ -67,9 +69,19 @@
     }
 }
 
-- (void)cordovaPOSPrint:(CDVInvokedUrlCommand *)command {
+- (void)cordovaPOSPrintText:(CDVInvokedUrlCommand *)command {
     
-    UIImage *imageToPrint = [self generateImageFromText:[command.arguments firstObject]];
+    NSString *text = [command.arguments firstObject];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.numberOfLines = 0;
+    label.text = text;
+    label.font = [UIFont systemFontOfSize:50];
+    label.backgroundColor = [UIColor whiteColor];
+    label.textColor = [UIColor blackColor];
+    [label sizeToFit];
+    
+    UIImage *imageToPrint = [self imageFromLabel:label];
     
     //Then print Image
     
@@ -86,21 +98,40 @@
     }];
 }
 
+- (void)cordovaPOSPrintHTMLText:(CDVInvokedUrlCommand *)command {
+    
+    NSString *text = [command.arguments firstObject];
+    [text attributedStringFromHTMLStringWithCompletion:^(NSAttributedString *attributedText) {
+        UILabel *label = [UILabel new];
+        label.numberOfLines = 0;
+        label.backgroundColor = [UIColor whiteColor];
+        label.attributedText = attributedText;
+        [label sizeToFit];
+        
+        UIImage *imageToPrint = [self imageFromLabel:label];
+        
+        //Then print Image
+        
+        [self print:imageToPrint completion:^(NSError *error) {
+            if (error == nil) {
+                [self.commandDelegate runInBackground:^{
+                    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Printed Successfully!"] callbackId:command.callbackId];
+                }];
+            } else {
+                [self.commandDelegate runInBackground:^{
+                    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription] callbackId:command.callbackId];
+                }];
+            }
+        }];
+    }];
+}
+
 #pragma mark - Printer Logic
 
-- (UIImage *)generateImageFromText:(NSString *)text {
+- (UIImage *)imageFromLabel:(UILabel)label {
     
-    UILabel *testLabel = [[UILabel alloc] init];
-    testLabel.numberOfLines = 0;
-    testLabel.text = text;
-    testLabel.font = [UIFont systemFontOfSize:50];
-    testLabel.textColor = [UIColor blackColor
-                           ];
-    testLabel.backgroundColor = [UIColor whiteColor];
-    [testLabel sizeToFit];
-    
-    UIGraphicsBeginImageContext(testLabel.bounds.size);
-    [testLabel.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIGraphicsBeginImageContext(label.bounds.size);
+    [label.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
@@ -108,16 +139,7 @@
 }
 
 - (void)print:(UIImage *)imgData completion:(void(^)(NSError *error))completion {
-    NSUserDefaults *pref=[NSUserDefaults standardUserDefaults];
-    NSString *tempIPStr= @"10.3.1.172";
-    
-    if (tempIPStr && tempIPStr.length > 0){
-        id portObj = [pref objectForKey:@"PrinterPort"];
-        if (!portObj || [portObj integerValue] == 0){
-            portObj = @"9100";
-        }
-        NSString *portString = [NSString stringWithFormat:@"%ld", (long)[portObj integerValue]];
-        
+    if (_activePrinter) {
         RasterDocument *rasterDoc = [[RasterDocument alloc] initWithDefaults:RasSpeed_Medium endOfPageBehaviour:RasPageEndMode_FeedAndFullCut endOfDocumentBahaviour:RasPageEndMode_FeedAndFullCut topMargin:RasTopMargin_Standard pageLength:0 leftMargin:0 rightMargin:0];
         
         StarBitmap *starbitmap = [[StarBitmap alloc] initWithUIImage:imgData :576 :false];
@@ -132,7 +154,7 @@
         shortcommand = [rasterDoc EndDocumentCommandData];
         [commandsToPrint appendData:shortcommand];
         
-        [self sendCommand:commandsToPrint portName:_activePrinter.portName portSettings:portString timeoutMillis:10000 completion:^(NSError *error) {
+        [self sendCommand:commandsToPrint portName:_activePrinter.portName portSettings:"9100" timeoutMillis:10000 completion:^(NSError *error) {
             completion(error);
         }];
     }

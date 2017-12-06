@@ -36,8 +36,18 @@ This plugin follows the Cordova 3.5+ plugin spec, so it can be installed through
     );
 
 
-    // Print text.
-    cordova.plugins.starIOPrint.print('Text To Print', 
+    // Print simple text.
+    cordova.plugins.starIOPrint.printText('Text To Print', 
+        function(success) { 
+            alert(success); 
+        }
+        , function(error) { 
+            alert(error); 
+        }
+    );
+
+    // Print html text.
+    cordova.plugins.starIOPrint.printHTMLText('<b>Hello World!</b>', 
         function(success) { 
             alert(success); 
         }

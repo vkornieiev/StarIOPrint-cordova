@@ -12,6 +12,8 @@
 
 - (void)getAvailablePrintersList:(CDVInvokedUrlCommand *)command;
 - (void)connectToPrinter:(CDVInvokedUrlCommand *)command;
-- (void)cordovaPOSPrint:(CDVInvokedUrlCommand *)command;
+
+- (void)cordovaPOSPrintText:(CDVInvokedUrlCommand *)command;
+- (void)cordovaPOSPrintHTMLText:(CDVInvokedUrlCommand *)command;
 
 @end
