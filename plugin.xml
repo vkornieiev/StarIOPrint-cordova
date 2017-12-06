@@ -44,6 +44,9 @@
         <header-file src="src/ios/RasterDocument.h" />
         <source-file src="src/ios/RasterDocument.m" />
         
+        <header-file src="src/ios/NSString+HTMLAttributedString.h" />
+        <source-file src="src/ios/NSString+HTMLAttributedString.m" />
+
         <header-file src="src/ios/StarBitmap.h" />
         <source-file src="src/ios/StarBitmap.m" />
         
