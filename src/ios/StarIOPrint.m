@@ -128,7 +128,7 @@
 
 #pragma mark - Printer Logic
 
-- (UIImage *)imageFromLabel:(UILabel)label {
+- (UIImage *)imageFromLabel:(UILabel *)label {
     
     UIGraphicsBeginImageContext(label.bounds.size);
     [label.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -154,7 +154,7 @@
         shortcommand = [rasterDoc EndDocumentCommandData];
         [commandsToPrint appendData:shortcommand];
         
-        [self sendCommand:commandsToPrint portName:_activePrinter.portName portSettings:"9100" timeoutMillis:10000 completion:^(NSError *error) {
+        [self sendCommand:commandsToPrint portName:_activePrinter.portName portSettings:@"9100" timeoutMillis:10000 completion:^(NSError *error) {
             completion(error);
         }];
     }

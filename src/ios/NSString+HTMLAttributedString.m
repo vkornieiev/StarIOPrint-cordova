@@ -18,9 +18,8 @@
                               };
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString
-        NSAttributedString *attrString = [[NSAttributedString alloc] initWithData:data options:options documentAttributes:nil error:nil];
-        completion(attrString);
+        NSAttributedString *attributedString = [[NSAttributedString alloc] initWithData:data options:options documentAttributes:nil error:nil];
+        completion(attributedString);
     });
 }
 
